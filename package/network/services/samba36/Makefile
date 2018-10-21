@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=samba
 PKG_VERSION:=3.6.25
-PKG_RELEASE:=12
+PKG_RELEASE:=13
 
 PKG_SOURCE_URL:=https://download.samba.org/pub/samba \
 		https://download.samba.org/pub/samba/stable
@@ -40,7 +40,8 @@ endef
 define Package/samba36-server
   $(call Package/samba/Default)
   TITLE+= server
-  DEPENDS:=+USE_GLIBC:librt $(ICONV_DEPENDS)
+  DEPENDS:=+USE_GLIBC:librt $(ICONV_DEPENDS) \
+  +KERNEL_AIO:libaio
 endef
 
 define Package/samba36-hotplug
@@ -115,6 +116,7 @@ CONFIGURE_ARGS += \
 	--disable-static \
 	--disable-swat \
 	--disable-shared-libs \
+	$(if $(CONFIG_KERNEL_AIO),--with-aio-support,) \
 	--with-libiconv="$(ICONV_PREFIX)" \
 	--with-codepagedir=/etc/samba \
 	--with-configdir=/etc/samba \
